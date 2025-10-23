@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebRTC Video Calling</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen active">
+      <div class="login-container">
+        <div class="login-card">
+          <h1>Welcome to Video Call</h1>
+          <p class="warning-text">⚠️ Please use the secure link to access this application</p>
+          <div class="login-form">
+            <input type="text" id="username-input" placeholder="Enter your username" />
+            <button id="login-btn" class="btn btn-primary">Join Call</button>
+          </div>
+          <p class="info-text">Your secure link: <span id="secure-link"></span></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main App Screen -->
+    <div id="app-screen" class="screen">
+      <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+          <div class="header-content">
+            <h1>Video Call App</h1>
+            <div class="header-actions">
+              <span id="user-greeting" class="user-greeting"></span>
+              <button id="logout-btn" class="btn btn-secondary">Logout</button>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="app-content">
+          <!-- Tabs -->
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="users">Online Users</button>
+            <button class="tab-btn" data-tab="history">Call History</button>
+          </div>
+
+          <!-- Users Tab -->
+          <div id="users-tab" class="tab-content active">
+            <div id="users-list" class="users-list"></div>
+          </div>
+
+          <!-- Call History Tab -->
+          <div id="history-tab" class="tab-content">
+            <div id="call-history-list" class="call-history-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video Call Container -->
+      <div id="video-call-container" class="video-call-container hidden">
+        <div class="video-grid">
+          <div class="video-wrapper local-video-wrapper">
+            <video id="local-video" autoplay muted playsinline></video>
+            <div class="video-label">You</div>
+            <div class="signal-strength">
+              <span class="signal-bars">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+              </span>
+            </div>
+          </div>
+
+          <div class="video-wrapper remote-video-wrapper">
+            <video id="remote-video" autoplay playsinline></video>
+            <div class="video-label" id="remote-user-label">Caller</div>
+            <div class="signal-strength">
+              <span class="signal-bars">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+              </span>
+            </div>
+            <div class="active-speaker-indicator"></div>
+          </div>
+        </div>
+
+        <!-- Call Controls -->
+        <div class="call-controls">
+          <button id="mic-btn" class="control-btn" title="Toggle Microphone">
+            <span class="icon">🎤</span>
+          </button>
+          <button id="video-btn" class="control-btn" title="Toggle Video">
+            <span class="icon">📹</span>
+          </button>
+          <button id="camera-flip-btn" class="control-btn" title="Flip Camera">
+            <span class="icon">🔄</span>
+          </button>
+          <button id="record-btn" class="control-btn" title="Record Call">
+            <span class="icon">⏺️</span>
+          </button>
+          <button id="add-member-btn" class="control-btn" title="Add Member">
+            <span class="icon">➕</span>
+          </button>
+          <button id="end-call-btn" class="control-btn end-call" title="End Call">
+            <span class="icon">📞</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Incoming Call Modal -->
+      <div id="incoming-call-modal" class="modal hidden">
+        <div class="modal-content incoming-call">
+          <div class="caller-info">
+            <div class="caller-avatar">📞</div>
+            <h2 id="caller-name">Incoming Call</h2>
+            <p id="call-timer">30</p>
+          </div>
+          <div class="call-actions">
+            <button id="answer-btn" class="btn btn-success">Answer</button>
+            <button id="reject-btn" class="btn btn-danger">Reject</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Outgoing Call Modal -->
+      <div id="outgoing-call-modal" class="modal hidden">
+        <div class="modal-content outgoing-call">
+          <div class="caller-info">
+            <div class="ringing-animation">
+              <div class="ring"></div>
+              <div class="ring"></div>
+              <div class="ring"></div>
+            </div>
+            <h2 id="outgoing-user-name">Calling...</h2>
+            <p id="outgoing-timer">30</p>
+          </div>
+          <div class="call-actions">
+            <button id="cancel-call-btn" class="btn btn-danger">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Member Modal -->
+      <div id="add-member-modal" class="modal hidden">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Add Member to Call</h2>
+            <button class="close-btn">&times;</button>
+          </div>
+          <div id="available-users-list" class="available-users-list"></div>
+        </div>
+      </div>
+
+      <!-- Call History Details Modal -->
+      <div id="call-details-modal" class="modal hidden">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Call Details</h2>
+            <button class="close-btn">&times;</button>
+          </div>
+          <div id="call-details-content" class="call-details-content"></div>
+        </div>
+      </div>
+
+      <!-- Logout Modal -->
+      <div id="logout-modal" class="modal hidden">
+        <div class="modal-content logout-modal">
+          <div class="thank-you-content">
+            <h2>Thank You!</h2>
+            <p>Your session has ended</p>
+            <button id="relogin-btn" class="btn btn-primary">Login Again</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="client.js"></script>
+    <script src="webrtc.js"></script>
+  </body>
+</html>
